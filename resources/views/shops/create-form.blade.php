@@ -26,7 +26,7 @@
         </label><br>
         <label>
             <b>Address</b>
-            <textarea name="description" cols="30" rows="10" required></textarea>
+            <textarea name="address" cols="30" rows="10" required></textarea>
         </label><br>
         <button type="submit">Create</button>
     </form>
