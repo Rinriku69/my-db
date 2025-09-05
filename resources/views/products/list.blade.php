@@ -42,6 +42,7 @@
     <tr>
         <th>Code</th>
         <th>Name</th>
+        <th>Price</th>
     </tr>
   </thead>
   <tbody>
@@ -53,6 +54,7 @@
         {{$product->code}}
         </a></td>
         <td>{{$product->name}}</td>
+        <td>{{$product->price}}</td>
     </tr>
         
     @endforeach

@@ -32,5 +32,15 @@ Route::controller(ShopController::class)
   ->name('shops.')
   ->group(static function(): void{
     route::get('','list')->name('list');
-    route::get('/{shopCode}','view')->name('view');
+    route::get('/create','CreateForm')->name('create-form');
+    route::post('/create','create')->name('create');
+
+    Route::prefix('/{shopCode}')->group(static function(): void{
+      route::get('','view')->name('view');
+      route::get('/update','UpdateForm')->name('update-form');
+      route::post('/update','update')->name('update');
+      Route::post('/delete', 'delete')->name('delete');
+      
+    });
+   
   });
