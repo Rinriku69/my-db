@@ -15,6 +15,7 @@ href="{{ asset('css/common.css') }}" />
        <li><a href="{{route('products.list')}}">Product List</a></li>
        <li><a href="{{route('shops.list')}}">Shops List</a></li>
        
+       
       </ul>   
     </nav>
     </header>

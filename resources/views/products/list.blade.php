@@ -1,12 +1,48 @@
 @extends('products.main',
 ['title' => "List"])
+@section('header')
+
+    <nav>
+      
+      <search>
+      <form action="{{ route('products.list') }}" method="get">
+        <div class="form">
+        <label for="app-inp-search-term" >Search</label>
+        <input  type="text" id="app-inp-search-term"
+          name="term" value="{{ $criteria['term'] }}" /><br>
+        <label>
+        Min Price
+        <input type="number" name="minPrice" value="{{ $criteria['minPrice'] }}"
+        step="any" />
+        </label><br />
+        <label>
+        Max Price
+        <input type="number" name="maxPrice" value="{{ $criteria['maxPrice'] }}"
+        step="any" />
+        </label><br />
+        </div>
+        <div class="button">
+                <button type="submit">Search</button>
+            <a href="{{ route('products.list') }}">
+                <button type="button">X</button>
+            </a>
+        </div>
+      </form>
+</search>
+<li class="app-cmp-links"><a href="{{route('products.create-form')}}">Create Product</a></li>
+      {{$products->withQueryString()->links()}}
+    </nav>
+@endsection
+
 
 @section('content')
+  
 <table class="app-cmp-data-list">
   <thead>
     <tr>
         <th>Code</th>
         <th>Name</th>
+        <th>Price</th>
     </tr>
   </thead>
   <tbody>
@@ -18,6 +54,7 @@
         {{$product->code}}
         </a></td>
         <td>{{$product->name}}</td>
+        <td>{{$product->price}}</td>
     </tr>
         
     @endforeach
