@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Shop;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -14,21 +15,25 @@ class ShopController extends SearchableController
 
     const int max_items = 5;
     #[\Override] //to notaion if parent change the function name
-    function getQuery() : Builder {
+    function getQuery() : Builder | Relation{
     return Shop::orderBy('code');
     }
 
     #[\Override]
     function applyWhereToFilterByTerm(Builder $query, string $word): void {
+    //parent::applyWhereToFilterByTerm($query,$word)
     $query
     ->where('code', 'LIKE', "%{$word}%")
     ->orWhere('name', 'LIKE', "%{$word}%")
     ->orWhere('owner','LIKE',"%{$word}%");
     }
 
+    
+
+
     function list(ServerRequestInterface $request) : View{
         $criteria = $this->prepareCriteria($request->getQueryParams());
-        $query = $this->search($criteria);
+        $query = $this->search($criteria)->withCount('products');
         return view('shops.list',[
             'shops' => $query->paginate(self::max_items),
             'criteria' => $criteria,
@@ -77,5 +82,23 @@ class ShopController extends SearchableController
     $shop->delete();
 
     return redirect()->route('shops.list');
+    }
+
+    function viewProducts(
+        ServerRequestInterface $request,
+        ProductController $productController,
+        string $shopCode
+    ): View {
+        $product = $this->find($shopCode);
+        $criteria = $productController->prepareCriteria($request->getQueryParams());
+        $query = $productController
+            ->filter($product->products(), $criteria)
+            ->with('category')
+            ->withCount('shops');
+        return view('shops.view-products', [
+            'shopCode' => $shopCode,
+            'criteria' => $criteria,
+            'products' => $query->paginate($productController::max_items),
+        ]);
     }
 }

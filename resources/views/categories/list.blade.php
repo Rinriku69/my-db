@@ -1,4 +1,4 @@
-@extends('shops.main',[
+@extends('categories.main',[
     'title' => "List"
 ])
 
@@ -7,7 +7,7 @@
     <nav>
       
       <search>
-      <form action="{{ route('shops.list') }}" method="get">
+      <form action="{{ route('categories.list') }}" method="get">
         <div class="form">
         <label for="app-inp-search-term" >Search</label>
         <input  type="text" id="app-inp-search-term"
@@ -16,14 +16,14 @@
         </div>
         <div class="button">
                 <button type="submit">Search</button>
-            <a href="{{ route('shops.list') }}">
+            <a href="{{ route('categories.list') }}">
                 <button type="button">X</button>
             </a>
         </div>
       </form>
 </search>
-<li class="app-cmp-links"><a href="{{route('shops.create-form')}}">Create Shop</a></li>
-      {{$shops->withQueryString()->links()}}
+<li class="app-cmp-links"><a href="{{route('categories.create-form')}}">New Category</a></li>
+      {{$categories->withQueryString()->links()}}
     </nav>
 @endsection
 
@@ -33,21 +33,19 @@
     <tr>
         <th>Code</th>
         <th>Name</th>
-        <th>Owner</th>
         <th>No. of Products</th>
     </tr>
   </thead>
   <tbody>
-    @foreach ($shops as $shop)
+    @foreach ($categories as $category)
     <tr>
         <td>
-        <a href="{{route('shops.view',[
-        'shopCode'=> $shop->code],)}}">
-        {{$shop->code}}
+        <a href="{{route('categories.view',[
+        'categoryCode'=> $category->code],)}}">
+        {{$category->code}}
         </a></td>
-        <td>{{$shop->name}}</td>
-        <td>{{$shop->owner}}</td>
-        <td>{{$shop->products_count}}</td>
+        <td>{{$category->name}}</td>
+        <td>{{$category->products_count}}</td>
     </tr>
         
     @endforeach
