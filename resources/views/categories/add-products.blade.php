@@ -1,9 +1,9 @@
-@extends('shops.main', ['title' => $shop->code.' Product'])
+@extends('categories.main', ['title' => $category->code.' Product'])
 @section('header')
     <nav>
 
         <search>
-            <form action="{{ route('shops.view-products', ['shopCode' => $shop->code]) }}" method="get">
+            <form action="{{ route('categories.add-product-form', ['categoryCode' => $category->code]) }}" method="get">
                 <div class="form">
                     <label for="app-inp-search-term">Search</label>
                     <input type="text" id="app-inp-search-term" name="term" value="{{ $criteria['term'] }}" /><br>
@@ -18,7 +18,7 @@
                 </div>
                 <div class="button">
                     <button type="submit">Search</button>
-                    <a href="{{ route('shops.view-products', ['shopCode' => $shop->code]) }}">
+                    <a href="{{ route('categories.view-products', ['categoryCode' => $category->code]) }}">
                         <button type="button">X</button>
                     </a>
                 </div>
@@ -26,13 +26,10 @@
         </search>
     </nav>
     <nav>
-        <form action="{{route('shops.remove-product',[
-        'shopCode' => $shop->code])}}" id="remove-product"
-        method="POST">@csrf</form>
-        <li class="app-cmp-links"><a href="{{ route('shops.add-product-form', ['shopCode' => $shop->code]) }}">Add product</a></li>
-        <li class="app-cmp-links"><a href="{{ route('shops.view', ['shopCode' => $shop->code]) }}">Back</a></li>
+        <form action="{{route('categories.add-product-form', 
+        ['categoryCode' => $category->code])}}" id="add-product" method="POST">@csrf</form>
+        <li class="app-cmp-links"><a href="{{ route('categories.view-products', ['categoryCode' => $category->code]) }}">Back</a></li>
         {{ $products->withQueryString()->links() }}
-    
     </nav>
 @endsection
 
@@ -47,6 +44,7 @@
                 <th>Price</th>
                 <th>No. of Shops</th>
                 <th></th>
+
             </tr>
         </thead>
         <tbody>
@@ -64,7 +62,7 @@
                     <td>{{ $product->price }}</td>
                     <td>{{ $product->shops_count }}</td>
                     <td>
-                        <button type="submit"  form="remove-product" name="product" value="{{$product->code}}">Remove</button>
+                        <button type="submit" form="add-product" name="product" value="{{$product->code}}">Add</button>
                     </td>
                 </tr>
             @endforeach

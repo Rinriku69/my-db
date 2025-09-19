@@ -1,13 +1,12 @@
 @extends('products.main', [
-    'title' => $product->code.' Shops',
+    'title' => $product->code . ' Add Shops',
 ])
 
 @section('header')
     <nav>
 
         <search>
-            <form action="{{ route('products.view-shops',
-            ['productCode' => $product->code]) }}" method="get">
+            <form action="{{ route('products.add-shops-form', ['productCode' => $product->code]) }}" method="get">
                 <div class="form">
                     <label for="app-inp-search-term">Search</label>
                     <input type="text" id="app-inp-search-term" name="term" value="{{ $criteria['term'] }}" /><br>
@@ -15,8 +14,7 @@
                 </div>
                 <div class="button">
                     <button type="submit">Search</button>
-                    <a href="{{ route('products.view-shops',
-            ['productCode' => $product->code]) }}">
+                    <a href="{{ route('products.view-shops', ['productCode' => $product->code]) }}">
                         <button type="button">X</button>
                     </a>
                 </div>
@@ -24,20 +22,24 @@
         </search>
     </nav>
     <nav>
-        <form action="{{route('products.remove-shop',[
+        <form action="{{ route('products.add-shops', [
             'productCode' => $product->code,
-        ])}}" method="post" id="remove-shop">@csrf</form>
-        <li class="app-cmp-links"><a href="{{ route('products.view', [
-            'productCode' => $product->code,
-        ]) }}">Back</a></li>
-        <li class="app-cmp-links"><a href="{{ route('products.add-shops-form', [
-            'productCode' => $product->code,
-        ]) }}">Add shops</a></li>
+        ]) }}" method="POST"
+            id="add-shops">
+             @csrf
+        </form>
+       
+        <li class="app-cmp-links"><a
+                href="{{ route('products.add-shops-form', [
+                    'productCode' => $product->code,
+                ]) }}">Back</a>
+        </li>
         {{ $shops->withQueryString()->links() }}
     </nav>
 @endsection
 
 @section('content')
+    @csrf
     <table class="app-cmp-data-list">
         <thead>
             <tr>
@@ -52,9 +54,10 @@
             @foreach ($shops as $shop)
                 <tr>
                     <td>
-                        <a href="{{ route('shops.view', [
-                            'shopCode' => $shop->code,
-                        ]) }}">
+                        <a
+                            href="{{ route('shops.view', [
+                                'shopCode' => $shop->code,
+                            ]) }}">
                             {{ $shop->code }}
                         </a>
                     </td>
@@ -62,7 +65,7 @@
                     <td>{{ $shop->owner }}</td>
                     <td>{{ $shop->products_count }}</td>
                     <td>
-                        <button type="submit" form="remove-shop" name="shop" value="{{$shop->code}}">Remove</button>
+                        <button type="submit" form="add-shops" name="shop" value="{{$shop->code}}">Add</button>
                     </td>
                 </tr>
             @endforeach
