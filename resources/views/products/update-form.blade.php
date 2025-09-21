@@ -13,6 +13,15 @@
             <input type="text" name="name"  value="{{$product->name}}">
         </label><br>
         <label >
+            <b>Category</b>
+        <select name="category_id" id="">
+            @foreach ($categories as $category)
+                <option value="{{$category->id}}"
+                    @selected($product->category->code === $category->code)>
+            [{{$category->code}}] {{$category->name}}</option>
+            @endforeach
+        </select></label><br>
+        <label >
             <b>Price</b>
             <input type="number" name="price" value="{{$product->price}}">
         </label><br>

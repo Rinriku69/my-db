@@ -3,9 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Shop extends Model
 {
     protected $table = 'shops';
     protected $fillable = ['code', 'name', 'owner', 'latitude','longitude','address'];
+
+    function products() : BelongsToMany{
+        return $this
+        ->belongsToMany(Product::class)
+        ->withTimestamps();
+    }
+
 }
