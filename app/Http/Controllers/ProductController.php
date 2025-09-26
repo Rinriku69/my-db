@@ -90,7 +90,14 @@ class ProductController extends SearchableController
 
     function create(ServerRequestInterface $request): RedirectResponse
     {
-        $product = Product::create($request->getParsedBody());
+        //$product = Product::create($request->getParsedBody()); mass insert
+        $data = $request->getParsedBody();
+        $category = Category::find($data['category_id']);
+
+        $product = new Product();
+        $product->fill($data);
+        $product->category()->associate($category);
+        $product->save();
 
         return redirect()->route('products.list');
     }
@@ -109,9 +116,16 @@ class ProductController extends SearchableController
         ServerRequestInterface $request,
         string $productCode,
     ): RedirectResponse {
+        $data = $request->getParsedBody();
         $product = $this->find($productCode);
-        $product->fill($request->getParsedBody());
+        $category = Category::find($data['category_id']);
+
+        $product->fill($data);
+        $product->category()->associate($category);
         $product->save();
+        /* $product = $this->find($productCode);
+        $product->fill($request->getParsedBody());
+        $product->save(); */ //mass update
 
         return redirect()->route('products.view', [
             'productCode' => $product->code,

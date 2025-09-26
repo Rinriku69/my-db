@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
-    protected $fillable = ['code', 'name','category_id', 'price', 'description'];
+    protected $fillable = ['code', 'name', 'price', 'description'];
 
     function shops() : BelongsToMany{
         return $this
