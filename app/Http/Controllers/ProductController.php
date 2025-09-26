@@ -99,7 +99,8 @@ class ProductController extends SearchableController
         $product->category()->associate($category);
         $product->save();
 
-        return redirect()->route('products.list');
+        return redirect()->route('products.list')
+        ->with('status','Product '.$product->code.' was created');
     }
 
     function UpdateForm(string $productCode): View
@@ -129,7 +130,7 @@ class ProductController extends SearchableController
 
         return redirect()->route('products.view', [
             'productCode' => $product->code,
-        ]);
+        ])->with('status','Product '.$product->code.' was updated');
     }
 
     function delete(string $productCode): RedirectResponse
@@ -137,7 +138,8 @@ class ProductController extends SearchableController
         $product = $this->find($productCode);
         $product->delete();
 
-        return redirect()->route('products.list');
+        return redirect()->route('products.list')
+        ->with('status','Product '.$productCode.' was Deleted');
     }
 
     function viewShops(

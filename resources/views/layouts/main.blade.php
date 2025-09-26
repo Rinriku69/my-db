@@ -25,6 +25,14 @@ href="{{ asset('css/common.css') }}" />
         <header>
             <h1><span @class($titleClasses ?? [])>{{$title}}</span></h1>
             @yield('header')
+
+            <div class="notification">
+              @session('status')
+                  <div role="status">
+                    {{$value}}
+                  </div>
+              @endsession
+            </div>
         </header>
     
         @yield('content')
