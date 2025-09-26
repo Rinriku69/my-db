@@ -17,5 +17,9 @@
             <textarea name="description" cols="30" rows="10" required></textarea>
         </label><br>
         <button type="submit">Create</button>
+        <a href="{{session()->get('bookmarks.categories.create-form',
+        route('categories.list'))}}">
+            <button type="button">Cancel</button>
+        </a>
     </form>
 @endsection

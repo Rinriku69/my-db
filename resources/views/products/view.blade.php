@@ -11,15 +11,23 @@
             @csrf
         </form>
         <ul>
+
             <li>
-                <a href="{{ route('products.view-shops', [
-                    'productCode' => $product->code,
-                ]) }}">View Shop</a>
+                <a href="{{ session()->get('bookmarks.products.view', route('products.list')) }}">&lt; Back</a>
+            </li>
+
+            <li>
+                <a
+                    href="{{ route('products.view-shops', [
+                        'productCode' => $product->code,
+                    ]) }}">View
+                    Shop</a>
             </li>
             <li>
-                <a href="{{ route('products.update-form', [
-                    'productCode' => $product->code,
-                ]) }}">Update</a>
+                <a
+                    href="{{ route('products.update-form', [
+                        'productCode' => $product->code,
+                    ]) }}">Update</a>
             </li>
             <li>
                 <button type="submit" form="app-form-delete" class="app-cl-link">Delete</button>
@@ -29,6 +37,9 @@
 @endsection
 
 @section('content')
+    @php
+        session()->put('bookmarks.products.view-shops', url()->full());
+    @endphp
     <dl>
         <dt>Code</dt>
         <dd>{{ $product->code }}</dd>

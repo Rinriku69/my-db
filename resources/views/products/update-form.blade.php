@@ -1,34 +1,37 @@
-@extends('products.main',
-['title' => $product->code])
+@extends('products.main', ['title' => $product->code])
 
 @section('content')
-    <form action="{{route('products.update',['productCode' => $product->code,])}}" method="POST">
+    <form action="{{ route('products.update', ['productCode' => $product->code]) }}" method="POST">
         @csrf
-        <label >
+        <label>
             <b>Code</b>
-            <input type="text" name="code"  value="{{$product->code}}">
+            <input type="text" name="code" value="{{ $product->code }}">
         </label><br>
-        <label >
+        <label>
             <b>Name</b>
-            <input type="text" name="name"  value="{{$product->name}}">
+            <input type="text" name="name" value="{{ $product->name }}">
         </label><br>
-        <label >
+        <label>
             <b>Category</b>
-        <select name="category_id" id="">
-            @foreach ($categories as $category)
-                <option value="{{$category->id}}"
-                    @selected($product->category->code === $category->code)>
-            [{{$category->code}}] {{$category->name}}</option>
-            @endforeach
-        </select></label><br>
-        <label >
+            <select name="category_id" id="">
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" @selected($product->category->code === $category->code)>
+                        [{{ $category->code }}] {{ $category->name }}</option>
+                @endforeach
+            </select></label><br>
+        <label>
             <b>Price</b>
-            <input type="number" name="price" value="{{$product->price}}">
+            <input type="number" name="price" value="{{ $product->price }}">
         </label><br>
         <label>
             <b>Description</b>
-            <textarea name="description" cols="30" rows="10" >{{$product->description}}</textarea>
+            <textarea name="description" cols="30" rows="10">{{ $product->description }}</textarea>
         </label><br>
         <button type="submit">Update</button>
+        <a href="{{ route('products.view', [
+            'productCode' => $product->code,
+        ]) }}">
+            <button type="button">Cancel</button>
+        </a>
     </form>
 @endsection

@@ -99,7 +99,9 @@ class ProductController extends SearchableController
         $product->category()->associate($category);
         $product->save();
 
-        return redirect()->route('products.list')
+        return redirect(
+            session()->get('bookmarks.products.create-form', route('products.list'))
+        )
         ->with('status','Product '.$product->code.' was created');
     }
 
@@ -138,8 +140,10 @@ class ProductController extends SearchableController
         $product = $this->find($productCode);
         $product->delete();
 
-        return redirect()->route('products.list')
-        ->with('status','Product '.$productCode.' was Deleted');
+        return redirect(
+            session()->get('bookmarks.products.view', route('products.list'))
+        )
+        ->with('status','Product '.$product->code.' was Deleted');
     }
 
     function viewShops(
@@ -200,7 +204,8 @@ class ProductController extends SearchableController
             ->where('code', $data['shop'])
             ->firstOrFail();
         $product->shops()->attach($shop);
-        return redirect()->back();
+        return redirect()->back()
+        ->with('status','Shop '.$data['shop'].' was added to product '.$productCode);
     }
 
     function removeShop(
@@ -215,6 +220,7 @@ class ProductController extends SearchableController
             ->firstOrFail();
         
         $product->shops()->detach($shop);
-        return redirect()->back();
+        return redirect()->back()
+        ->with('status','Shop '.$data['shop'].' was removed from product '.$productCode);
     }
 }

@@ -11,6 +11,10 @@
         </form>
         <ul>
             <li>
+                <a href="{{ session()->get('bookmarks.categories.view', 
+                route('categories.list')) }}">&lt; Back</a>
+            </li>
+            <li>
                 <a href="{{ route('categories.view-products', [
                     'categoryCode' => $category->code,
                 ]) }}">View Products</a>
@@ -28,6 +32,9 @@
 @endsection
 
 @section('content')
+@php
+    session()->put('bookmarks.categories.view-products',url()->full())
+@endphp
     <dl>
         <dt>Code ::</dt>
         <dd>{{ $category->code }}</dd><br>

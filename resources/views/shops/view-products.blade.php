@@ -30,7 +30,9 @@
         'shopCode' => $shop->code])}}" id="remove-product"
         method="POST">@csrf</form>
         <li class="app-cmp-links"><a href="{{ route('shops.add-product-form', ['shopCode' => $shop->code]) }}">Add product</a></li>
-        <li class="app-cmp-links"><a href="{{ route('shops.view', ['shopCode' => $shop->code]) }}">Back</a></li>
+        <li class="app-cmp-links">
+            <a href="{{ session('bookmarks.shops.view-products'
+            ,route('shops.view', ['shopCode' => $shop->code])) }}">Back</a></li>
         {{ $products->withQueryString()->links() }}
     
     </nav>
@@ -50,6 +52,11 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                session()->put('bookmarks.shops.add-products-form', url()->full());
+                session()->put('bookmarks.products.view', url()->full());
+                session()->put('bookmarks.categories.view',url()->full());
+            @endphp
             @foreach ($products as $product)
                 <tr>
                     <td>
@@ -60,7 +67,14 @@
                         </a>
                     </td>
                     <td>{{ $product->name }}</td>
-                    <td>{{ $product->category->name }}</td>
+                    <td>
+                        <a
+                            href="{{ route('categories.view', [
+                                'categoryCode' => $product->category->code,
+                            ]) }}">
+                            {{ $product->category->name }}
+                        </a>
+                    </td>
                     <td>{{ $product->price }}</td>
                     <td>{{ $product->shops_count }}</td>
                     <td>

@@ -37,7 +37,9 @@ class CategoryController extends SearchableController
     function create(ServerRequestInterface $request): RedirectResponse {
     $categories = Category::create($request->getParsedBody());
 
-    return redirect()->route('categories.list');
+    return redirect( 
+        session()->get('bookmarks.categories.create-form', route('categories.list')))
+    ->with('status','Category '.$categories->code.' was created');
     }
 
     function view(string $categoryCode) : View{
@@ -65,14 +67,18 @@ class CategoryController extends SearchableController
 
     return redirect()->route('categories.view', [
     'categoryCode' => $category->code,
-    ]);
+    ])
+    ->with('status','Category '.$category->code.' was updated');;
     }
 
     function delete(string $categoryCode): RedirectResponse {
     $category = $this->find($categoryCode);
     $category->delete();
 
-    return redirect()->route('categories.list');
+    return redirect(
+        session()->get('bookmarks.categories.view', route('categories.list'))
+    )
+    ->with('status','Category '.$category->code.' was deleted');;
     }
 
     function viewProducts(
@@ -141,7 +147,9 @@ class CategoryController extends SearchableController
             ->where('code', $data['product'])
             ->firstOrFail();
         $category->products()->save($product);
-        return redirect()->back();
+        return redirect()->back()
+        ->with('status','Product '.$data['product'].' was added to '
+    .$category->code);
     }
       
 }
