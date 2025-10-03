@@ -24,9 +24,11 @@
                 </div>
             </form>
         </search>
+        @can('create', \App\Models\Category::class)
         <li class="app-cmp-links"><a href="{{ route('categories.add-product-form', 
         ['categoryCode' => $categoryCode]) }}">Add product</a></li>
-        <li class="app-cmp-links"><a href="{{ route('categories.view', ['categoryCode' => $categoryCode]) }}">Back</a></li>
+        @endcan
+        <li class="app-cmp-links"><a href="{{route('categories.view', ['categoryCode' => $categoryCode]) }}">Back</a></li>
         {{ $products->withQueryString()->links() }}
     </nav>
 @endsection
@@ -45,6 +47,10 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                session()->put('bookmarks.categories.add-products-form', url()->full());
+                session()->put('bookmarks.products.view', url()->full());
+            @endphp
             @foreach ($products as $product)
                 <tr>
                     <td>

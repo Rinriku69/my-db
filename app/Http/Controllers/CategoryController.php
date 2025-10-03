@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Psr\Http\Message\ServerRequestInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends SearchableController
 {
@@ -31,13 +32,17 @@ class CategoryController extends SearchableController
     }
 
     function CreateForm(): View {
+    Gate::authorize('create', Category::class);
     return view('categories.create-form');
     }
 
     function create(ServerRequestInterface $request): RedirectResponse {
     $categories = Category::create($request->getParsedBody());
+    Gate::authorize('create', $categories);
 
-    return redirect()->route('categories.list');
+    return redirect( 
+        session()->get('bookmarks.categories.create-form', route('categories.list')))
+    ->with('status','Category '.$categories->code.' was created');
     }
 
     function view(string $categoryCode) : View{
@@ -49,7 +54,7 @@ class CategoryController extends SearchableController
 
     function UpdateForm(string $categoryCode): View {
     $category = $this->find($categoryCode);
-
+    Gate::authorize('update', $category);
     return view('categories.update-form', [
     'category' => $category,
     ]);
@@ -60,19 +65,24 @@ class CategoryController extends SearchableController
     string $categoryCode,
     ): RedirectResponse {
     $category = $this->find($categoryCode);
+    Gate::authorize('update', $category);
     $category->fill($request->getParsedBody());
     $category->save();
 
     return redirect()->route('categories.view', [
     'categoryCode' => $category->code,
-    ]);
+    ])
+    ->with('status','Category '.$category->code.' was updated');;
     }
 
     function delete(string $categoryCode): RedirectResponse {
     $category = $this->find($categoryCode);
+    Gate::authorize('delete', $category);
     $category->delete();
-
-    return redirect()->route('categories.list');
+    return redirect(
+        session()->get('bookmarks.categories.view', route('categories.list'))
+    )
+    ->with('status','Category '.$category->code.' was deleted');;
     }
 
     function viewProducts(
@@ -98,7 +108,9 @@ class CategoryController extends SearchableController
         ProductController $productController,
         string $categoryCode
     ): View {
+        
         $category = $this->find($categoryCode);
+        Gate::authorize('create', $category);
         $criteria = $productController->prepareCriteria($request->getQueryParams());
 
         $query = $productController
@@ -129,6 +141,7 @@ class CategoryController extends SearchableController
         string $categoryCode
     ): RedirectResponse {
         $category = $this->find($categoryCode);
+        Gate::authorize('create', $category);
         $data = $request->getParsedBody();
         $product = $productController
             ->getQuery()
@@ -141,7 +154,9 @@ class CategoryController extends SearchableController
             ->where('code', $data['product'])
             ->firstOrFail();
         $category->products()->save($product);
-        return redirect()->back();
+        return redirect()->back()
+        ->with('status','Product '.$data['product'].' was added to '
+    .$category->code);
     }
       
 }

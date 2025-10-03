@@ -1,4 +1,4 @@
-@extends('shops.main', ['title' => $shop->code.'Add Product'])
+@extends('shops.main', ['title' => $shop->code . 'Add Product'])
 @section('header')
     <nav>
 
@@ -26,10 +26,12 @@
         </search>
     </nav>
     <nav>
-        <form action="{{route('shops.add-product',['shopCode' => $shop->code])}}" id="add-product" method="post">
+        <form action="{{ route('shops.add-product', ['shopCode' => $shop->code]) }}" id="add-product" method="post">
             @csrf
         </form>
-        <li class="app-cmp-links"><a href="{{ route('shops.view-products', ['shopCode' => $shop->code]) }}">Back</a></li>
+        <li class="app-cmp-links">
+            <a href="{{ session('bookmarks.shops.add-products-form',
+            route('shops.view-products', ['shopCode' => $shop->code])) }}">Back</a></li>
         {{ $products->withQueryString()->links() }}
     </nav>
 @endsection
@@ -49,20 +51,32 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                session()->put('bookmarks.products.view', url()->full());
+                session()->put('bookmarks.categories.view',url()->full());
+            @endphp
             @foreach ($products as $product)
                 <tr>
                     <td>
                         <a href="{{ route('products.view', [
-                            'productCode' => $product->code,
-                        ]) }}">
+                                'productCode' => $product->code,
+                            ]) }}">
                             {{ $product->code }}
                         </a>
                     </td>
                     <td>{{ $product->name }}</td>
-                    <td>{{ $product->category->name }}</td>
+                    <td>
+                        <a
+                            href="{{ route('categories.view', [
+                                'categoryCode' => $product->category->code,
+                            ]) }}">
+                            {{ $product->category->name }}
+                        </a>
+                    </td>
                     <td>{{ $product->price }}</td>
                     <td>{{ $product->shops_count }}</td>
-                    <td><button type="submit" form="add-product" name="product" value="{{$product->code}}">Add</button></td>
+                    <td><button type="submit" form="add-product" name="product" value="{{ $product->code }}">Add</button>
+                    </td>
                 </tr>
             @endforeach
         </tbody>

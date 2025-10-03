@@ -7,6 +7,7 @@ use App\Models\Shop;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -47,17 +48,23 @@ class ShopController extends SearchableController
     }
 
     function CreateForm(): View {
+    Gate::authorize('create',Shop::class);
     return view('shops.create-form');
     }
 
     function create(ServerRequestInterface $request): RedirectResponse {
     $shop = Shop::create($request->getParsedBody());
+    Gate::authorize('create',$shop);
 
-    return redirect()->route('shops.list');
+    return redirect(
+        session()->get('bookmarks.shops.create-form', route('shops.list'))
+    )
+    ->with('status','Shop '.$shop->code.' was created');
     }
 
     function UpdateForm(string $shopCode): View {
     $shop = $this->find($shopCode);
+    Gate::authorize('update',$shop);
 
     return view('shops.update-form', [
     'shop' => $shop,
@@ -69,19 +76,25 @@ class ShopController extends SearchableController
     string $shopCode,
     ): RedirectResponse {
     $shop = $this->find($shopCode);
+    Gate::authorize('update',$shop);
     $shop->fill($request->getParsedBody());
     $shop->save();
 
     return redirect()->route('shops.view', [
     'shopCode' => $shop->code,
-    ]);
+    ])
+    ->with('status','Shop '.$shop->code.' was updated');;
     }
 
     function delete(string $shopCode): RedirectResponse {
     $shop = $this->find($shopCode);
+    Gate::authorize('delete',$shop);
     $shop->delete();
 
-    return redirect()->route('shops.list');
+    return redirect(
+        session()->get('bookmarks.shops.view', route('shops.list'))
+    )
+    ->with('status','Shop '.$shop->code.' was deleted');
     }
 
     function viewProducts(
@@ -107,6 +120,7 @@ class ShopController extends SearchableController
         string $shopCode
     ): View {
         $shop = $this->find($shopCode);
+        Gate::authorize('create',$shop);
         $criteria = $productController->prepareCriteria($request->getQueryParams());
        $query = $productController
             ->getQuery()
@@ -131,6 +145,7 @@ class ShopController extends SearchableController
         string $shopCode
     ): RedirectResponse {
         $shop = $this->find($shopCode);
+        Gate::authorize('create',$shop);
         $data = $request->getParsedBody();
         $product = $productController
             ->getQuery()
@@ -143,7 +158,9 @@ class ShopController extends SearchableController
             ->where('code', $data['product'])
             ->firstOrFail();
         $shop->products()->attach($product);
-        return redirect()->back();
+        return redirect()->back()
+        ->with('status','Product '.$data['product'].' was added to Shop '
+    .$shop->code);
     }
 
     function removeProduct(
@@ -151,6 +168,7 @@ class ShopController extends SearchableController
         string $shopCode,
     ): RedirectResponse {
         $shop = $this->find($shopCode);
+        Gate::authorize('create',$shop);
         $data = $request->getParsedBody();
        
         $product = $shop->products()
@@ -158,7 +176,9 @@ class ShopController extends SearchableController
             ->firstOrFail();
         
         $shop->products()->detach($product);
-        return redirect()->back();
+        return redirect()->back()
+        ->with('status','Product '.$data['product'].' was removed from Shop '
+    .$shop->code);
     } 
 
 

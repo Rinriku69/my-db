@@ -17,5 +17,9 @@
             <textarea name="description" cols="30" rows="10" >{{$category->description}}</textarea>
         </label><br>
         <button type="submit">Update</button>
+        <a href="{{ route('categories.view',
+        ['categoryCode' => $category->code])}}">
+            <button type="button">Cancel</button>
+        </a>
     </form>
 @endsection

@@ -29,5 +29,8 @@
             <textarea name="address" cols="30" rows="10" >{{$shop->address}}</textarea>
         </label><br>
         <button type="submit">Update</button>
+        <a href="{{route('shops.view',['shopCode'=>$shop->code])}}">
+            <button type="button">Cancel</button>
+        </a>
     </form>
 @endsection

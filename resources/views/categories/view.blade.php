@@ -11,23 +11,34 @@
         </form>
         <ul>
             <li>
+                <a href="{{ session()->get('bookmarks.categories.view', 
+                route('categories.list')) }}">&lt; Back</a>
+            </li>
+            <li>
                 <a href="{{ route('categories.view-products', [
                     'categoryCode' => $category->code,
                 ]) }}">View Products</a>
             </li>
+            @can('update', $category)
             <li>
                 <a href="{{ route('categories.update-form', [
                     'categoryCode' => $category->code,
                 ]) }}">Update</a>
             </li>
+            @endcan
+            @can('delete', $category)
             <li>
                 <button type="submit" form="app-form-delete" class="app-cl-link">Delete</button>
             </li>
+            @endcan
         </ul>
     </nav>
 @endsection
 
 @section('content')
+@php
+    session()->put('bookmarks.categories.view-products',url()->full())
+@endphp
     <dl>
         <dt>Code ::</dt>
         <dd>{{ $category->code }}</dd><br>

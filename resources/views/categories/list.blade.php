@@ -22,8 +22,12 @@
         </div>
       </form>
 </search>
+@can('create', $categories)
+    
+
 <li class="app-cmp-links"><a href="{{route('categories.create-form')}}">New Category</a></li>
-      {{$categories->withQueryString()->links()}}
+     @endcan 
+{{$categories->withQueryString()->links()}}
     </nav>
 @endsection
 
@@ -37,6 +41,10 @@
     </tr>
   </thead>
   <tbody>
+    @php
+        session()->put('bookmarks.categories.create-form',url()->full());
+        session()->put('bookmarks.categories.view',url()->full());
+    @endphp
     @foreach ($categories as $category)
     <tr>
         <td>

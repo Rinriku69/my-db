@@ -28,7 +28,9 @@
     <nav>
         <form action="{{route('categories.add-product-form', 
         ['categoryCode' => $category->code])}}" id="add-product" method="POST">@csrf</form>
-        <li class="app-cmp-links"><a href="{{ route('categories.view-products', ['categoryCode' => $category->code]) }}">Back</a></li>
+        <li class="app-cmp-links">
+            <a href="{{ session('bookmarks.categories.add-products-form',
+            route('categories.view-products', ['categoryCode' => $category->code])) }}">Back</a></li>
         {{ $products->withQueryString()->links() }}
     </nav>
 @endsection
@@ -48,6 +50,9 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                session()->put('bookmarks.products.view', url()->full());
+            @endphp
             @foreach ($products as $product)
                 <tr>
                     <td>
