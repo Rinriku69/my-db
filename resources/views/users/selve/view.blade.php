@@ -13,7 +13,7 @@
             
             <li>
                 <a
-                    href="{{route('users.updateForm',['user'=>$user->id])}}">Update</a>
+                    href="{{route('users.selves.updateForm',['user'=>$user->id])}}">Update</a>
             </li>
             
            

@@ -16,8 +16,10 @@
                 <li><a href="{{ route('products.list') }}">Product List</a></li>
                 <li><a href="{{ route('shops.list') }}">Shops List</a></li>
                 <li><a href="{{ route('categories.list') }}">Categories</a></li>
-                <li><a href="{{ route('users.list') }}">User</a></li>
-
+                @can('create', \App\Models\User::class)
+                 <li><a href="{{ route('users.list') }}">User</a></li>
+                @endcan
+                
 
             </ul>
         </nav>

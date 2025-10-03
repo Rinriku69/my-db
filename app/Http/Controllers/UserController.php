@@ -19,7 +19,9 @@ class UserController extends Controller
   
     function find(string $code): Model
     {
-        return User::where('id', $code)->firstOrFail();
+        return User::where('id', $code)
+        ->orwhere('email',$code)
+        ->firstOrFail();
     }
     
     function list(): View{ 
@@ -59,13 +61,14 @@ class UserController extends Controller
         $user->email = $data['email'];
         $user->role = $data['role'];
         $user->save();
-        return redirect()->route('users.list');
+        return redirect()->route('users.list')
+        ->with('status','User '.$user->name.' was created');
     }
 
     function delete(string $user): RedirectResponse
     {
         $user = $this->find($user);
-        /* Gate::authorize('delete',$product);  */
+       Gate::authorize('delete',$user); 
         $user->delete();
         Gate::authorize('delete', User::class);
         return redirect(
@@ -78,7 +81,7 @@ class UserController extends Controller
     {
          Gate::authorize('update', User::class);
         $user = $this->find($user);
-        /* Gate::authorize('update', $product);  */ 
+         Gate::authorize('update', $user); 
        
         return view('users.updateForm', [
             'user' => $user,
@@ -93,23 +96,29 @@ class UserController extends Controller
         Gate::authorize('update', User::class);
         $data = $request->getParsedBody();
         $user = $this->find($user);
-        /* Gate::authorize('update', $product);  */
-       
+        Gate::authorize('update', $user);
+       $password = $user->password;
 
         $user->fill($data);
         $user->email = $data['email'];
+        $user->role = $data['role'];
+         if($data['password'] !== null){
+            $user->password = $data['password'];
+        }else{
+             $user->password = $password;
+        } 
+      
         $user->save();
-        /* $product = $this->find($productCode);
-        $product->fill($request->getParsedBody());
-        $product->save(); */ //mass update
+      
 
         return redirect()->route('users.view', [
             'user' => $user->id,
         ])->with('status','User '.$user->name.' was updated');
     }
-    function selvesUpdateForm(string $user): View
+
+    function selvesUpdateForm(): View
     {
-         
+        $user = auth::user()->email;
         $user = $this->find($user);
         /* Gate::authorize('update', $product);  */ 
        
@@ -123,18 +132,25 @@ class UserController extends Controller
         ServerRequestInterface $request,
         string $user,
     ): RedirectResponse {
+        Gate::authorize('update', User::class);
         $data = $request->getParsedBody();
         $user = $this->find($user);
         /* Gate::authorize('update', $product);  */
-       
+       $password = $user->password;
 
         $user->fill($data);
         $user->email = $data['email'];
+        $user->role = $data['role'];
+         if($data['password'] !== null){
+            $user->password = $data['password'];
+        }else{
+             $user->password = $password;
+        } 
+      
         $user->save();
-        /* $product = $this->find($productCode);
-        $product->fill($request->getParsedBody());
-        $product->save(); */ //mass update
+       
 
-        return redirect()->route('users.selve.view')->with('status','User '.$user->name.' was updated');
+        return redirect()->route('users.selves.view'
+        )->with('status','User '.$user->name.' was updated');
     }
 }

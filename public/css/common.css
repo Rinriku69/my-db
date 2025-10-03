@@ -1,391 +1,166 @@
-:root {
-    font-family: sans-serif;
-    font-size: 16px;
+/* ==========================================================================
+   1. Design System: Variables & Root Setup
+   ========================================================================== */
 
-    --app-max-width: 600px;
+:root {
+    /* Color Palette */
+    --primary-color: #4368fa; /* A vibrant, modern blue */
+    --primary-hover: #3151d4;
+    --danger-color: #ef4444;
+    --danger-hover: #dc2626;
+    --success-color: #22c55e;
+    --success-hover: #16a34a;
+
+    /* Background & Surface Colors */
+    --light-bg: #f8fafc;        /* Main background color for the body */
+    --surface-color: #ffffff;   /* For cards, modals, etc. */
+    --dark-footer-bg: #1f2937;  /* A deep, modern dark gray for the footer */
+
+    /* Text Colors */
+    --text-primary: #111827;    /* For headings and primary text */
+    --text-secondary: #6b7280;  /* For paragraphs and secondary info */
+    --text-light: #f9fafb;      /* For text on dark backgrounds */
+    --text-link: var(--primary-color);
+
+    /* Border Colors */
+    --border-color: #e5e7eb;    /* Default border for inputs, cards */
+    --border-focus: var(--primary-color);
+
+    /* Typography */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    /* Sizing & Spacing */
+    --app-max-width: 1200px;
+    --border-radius-md: 0.5rem;
+    --border-radius-lg: 0.75rem;
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-html,
-body {
-    margin: 0px;
-    padding: 0px;
+/* ==========================================================================
+   2. Global Resets & Base Styles
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
     box-sizing: border-box;
-    width: 100%;
-    height: 100%;
+}
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    /* A clean, readable font */
     margin: 0;
+    font-family: var(--font-sans);
     background-color: var(--light-bg);
-    color: var(--text-color);
+    color: var(--text-secondary);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    /* Ensures footer sticks to the bottom */
 }
 
-.app-cl-number,
-input[type="number"] {
-    font-family: monospace;
-    text-align: right;
+/* Base link styling */
+a {
+    color: var(--text-link);
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
 }
 
-.app-cl-code {
-    color: blue;
-    font-family: monospace;
-    font-weight: bold;
+a:hover {
+    text-decoration: underline;
+    color: var(--primary-hover);
 }
 
-.app-cl-options-row {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    justify-content: flex-start;
-    column-gap: 2ch;
-}
+/* ==========================================================================
+   3. Main Layout: Header, Content, Footer
+   ========================================================================== */
 
-.app-ly-max-width {
-    width: min(var(--app-max-width), 100%);
-}
-
-table.app-cmp-data-list {
-    border-collapse: collapse;
-
-    width: 100%;
-
-    & > thead {
-        background-color: rgba(128, 128, 128, 0.75);
-    }
-
-    &,
-    & > * > tr > :is(th, td) {
-        border: 1px solid black;
-    }
-}
-
-.app-cmp-form-detail {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 8px;
-    row-gap: 0.5em;
-
-    & > :is(label, .app-cl-label) {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        font-weight: bold;
-    }
-}
-
-.app-cmp-form-actions {
-    display: flex;
-    align-items: stretch;
-    justify-content: space-around;
-    column-gap: 8px;
-
-    margin-top: 1em;
-}
-
-.app-cmp-search-form {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    column-gap: 8px;
-
-    margin-bottom: 1em;
-
-    & > .app-cmp-form-detail {
-        flex: 1 0 auto;
-    }
-
-    & > .app-cmp-form-actions {
-        margin: 0px;
-        padding: 0px;
-        align-items: center;
-    }
-}
-
-dl.app-cmp-data-detail {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    row-gap: 8px;
-}
-
-dl.app-cmp-data-detail > dt {
-    display: flex;
-    flex-direction: row;
-
-    font-weight: bold;
-}
-
-dl.app-cmp-data-detail > dt:not(:empty)::after {
-    content: "::";
-    padding-left: 1ch;
-    padding-right: 1ch;
-
-    margin-left: auto;
-}
-
-@layer {
-    #app-cmp-main-header,
-    #app-cmp-main-content,
-    #app-cmp-main-footer {
-        box-sizing: border-box;
-    }
-
-    #app-cmp-main-header,
-    #app-cmp-main-footer {
-        text-align: center;
-    }
-
-    #app-cmp-main-header {
-        padding: 8px 0px;
-    }
-
-    #app-cmp-main-content {
-        max-width: var(--app-max-width);
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 8px;
-        padding-right: 8px;
-
-        & > header {
-            text-align: center;
-        }
-
-        @layer {
-            a {
-                text-decoration: none;
-                color: inherit;
-
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
-        }
-    }
-}
-
-/* Additional */
-.app-cmp-links {
-    margin: 0px;
-    padding: 0px;
-    list-style: none;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: stretch;
-    column-gap: 8px;
-
-    color: blue;
-    font-weight: bold;
-
-    & > * {
-        margin: 0px;
-        padding: 0px;
-        box-sizing: border-box;
-
-        border: 1px solid currentColor;
-        border-radius: 4px;
-    }
-
-    a {
-        display: block;
-        box-sizing: border-box;
-
-        padding: 0.5em 1ch 0.5em 1ch;
-        text-decoration: none;
-        color: inherit;
-
-        &:hover {
-            background-color: rgba(128, 128, 128, 0.75);
-        }
-    }
-}
-
-.notification {
-    display: block;
-    margin-top: 20px;
-    text-decoration: solid;
-    font-weight: bold;
-    color: blue;
-}
-
-:root {
-    --primary-color: #4a90e2;
-    /* A nice, friendly blue */
-    --primary-hover: #357ABD;
-    --danger-color: #d9534f;
-    --danger-hover: #c9302c;
-    --light-bg: #f8f9fa;
-    --dark-footer: #343a40;
-    --text-color: #333;
-    --border-color: #dee2e6;
-    --white-color: #ffffff;
-}
-
-/* General Body & Layout Styles */
-body {
-    font-family: 'Inter', sans-serif;
-    /* A clean, readable font */
-    margin: 0;
-    background-color: var(--light-bg);
-    color: var(--text-color);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    /* Ensures footer sticks to the bottom */
-}
-
-/* Header and Navigation Bar */
-header {
-    background-color: var(--white-color);
-    padding: 1rem 2.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+#app-cmp-main-header {
+    background-color: var(--surface-color);
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow-md);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
-    /* Pushes nav and user actions to opposite ends */
     align-items: center;
-    border-bottom: 1px solid var(--border-color);
 }
 
-nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    /* Space between nav links */
-}
-
-nav a {
-    text-decoration: none;
-    color: var(--primary-color);
-    font-weight: 500;
-    font-size: 1.1rem;
-    padding-bottom: 5px;
-    border-bottom: 2px solid transparent;
-    /* For a subtle hover effect */
-    transition: color 0.3s ease, border-bottom-color 0.3s ease;
-}
-
-nav a:hover {
-    color: var(--primary-hover);
-    border-bottom-color: var(--primary-hover);
-}
-
-/* User Info and Actions Section (Login/Logout) */
-.user-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.username {
-    font-size: 0.9rem;
-    color: #6c757d;
-    white-space: nowrap;
-    /* Prevents username from wrapping */
-}
-
-/* General Button & Link-as-Button Styling */
-.login-button,
-.logout-button {
-    display: inline-block;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    border: none;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    text-align: center;
-}
-
-/* Specific styles for Login button */
-.login-button {
-    background-color: var(--primary-color);
-    color: var(--white-color);
-    text-decoration: none;
-}
-
-.login-button:hover {
-    background-color: var(--primary-hover);
-}
-
-/* Specific styles for Logout button */
-.logout-button {
-    background-color: var(--danger-color);
-    color: var(--white-color);
-}
-
-.logout-button:hover {
-    background-color: var(--danger-hover);
-}
-
-/* Main Content Area */
-main {
+#app-cmp-main-content {
     flex: 1;
-    /* This allows the main content to grow and fill available space */
-    padding: 2.5rem;
-    max-width: 1200px;
     width: 100%;
+    max-width: var(--app-max-width);
     margin: 0 auto;
-    /* Centers the content on larger screens */
-    box-sizing: border-box;
+    padding: 2.5rem 2rem;
 }
 
-/* A generic wrapper for your content pages for consistent styling */
-/* Example: <div class="content-wrapper"> ... your quiz/library content ... </div> */
-.content-wrapper {
-    background-color: var(--white-color);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-
-    .library-link {
-        font-family: Arial, sans-serif;
-        font-size: 16px;
-        font-weight: bold;
-        text-decoration: none;
-        display: block;
-        margin: 10px auto 10px auto;
-        color: #476EAE;
-    }
-}
-
-
-/* Footer */
-footer {
-    background-color: var(--dark-footer);
-    color: var(--light-bg);
+#app-cmp-main-footer {
+    background-color: var(--dark-footer-bg);
+    color: var(--text-light);
     text-align: center;
-    padding: 1.5rem;
+    padding: 2rem 1rem;
     margin-top: auto;
-    /* Helps push footer to the bottom */
 }
 
-/* NEW STYLES FOR LIBRARY PAGES */
+/* Generic container for page content */
+.content-wrapper {
+    background-color: var(--surface-color);
+    padding: 2.5rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+}
 
-/* Page Titles */
-.content-wrapper h1 {
-    font-size: 2rem;
-    color: var(--text-color);
+.content-wrapper h1,
+.content-wrapper h2 {
+    color: var(--text-primary);
     margin-top: 0;
-    margin-bottom: 2rem;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
-/* Form Styles (for create.blade.php) */
-.form-container {
-    max-width: 600px;
-    margin: 0 auto;
+/* ==========================================================================
+   4. Component Styles: Forms, Buttons, Tables, etc.
+   ========================================================================== */
+
+/* --- Forms (Login & General) --- */
+
+.login-page-body {
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 1rem;
+}
+
+.login-form {
+    background-color: var(--surface-color);
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--border-radius-lg);
+    padding: 2.5rem 2rem;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.form-header h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.form-header p {
+    margin-top: 0.5rem;
+    font-size: 1rem;
 }
 
 .form-group {
@@ -394,151 +169,155 @@ footer {
 
 .form-group label {
     display: block;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 0.5rem;
-    color: #495057;
+    color: var(--text-primary);
+    font-size: 0.875rem;
 }
 
 .form-control,
 .form-select {
+    display: block;
     width: 100%;
     padding: 0.8rem 1rem;
     font-size: 1rem;
-    border-radius: 8px;
+    font-family: var(--font-sans);
+    border-radius: var(--border-radius-md);
     border: 1px solid var(--border-color);
-    box-sizing: border-box;
-    /* Ensures padding doesn't affect width */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-control:focus,
 .form-select:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(67, 104, 250, 0.25);
 }
 
-/* Button Styles */
-.btn {
+/* --- Buttons --- */
+
+.btn,
+.login-button,
+.logout-button {
     display: inline-block;
     padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 500;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
     border: none;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 1rem;
     text-align: center;
-    text-decoration: none;
 }
 
-.btn-primary {
+.btn-primary,
+.login-button {
     background-color: var(--primary-color);
     color: var(--white-color);
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.login-button:hover {
     background-color: var(--primary-hover);
+    text-decoration: none;
 }
 
-.login-container {
-            width: 100%;
-            max-width: 28rem;
-        }
+.btn-danger,
+.logout-button {
+    background-color: var(--danger-color);
+    color: var(--white-color);
+}
 
-        .login-form {
-            background-color: #fff;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            border-radius: 0.75rem;
-            padding: 2rem 2rem;
-            margin-bottom: 1rem;
-        }
+.btn-danger:hover,
+.logout-button:hover {
+    background-color: var(--danger-hover);
+    text-decoration: none;
+}
 
-        .form-header {
-            margin-bottom: 2rem;
-            text-align: center;
-        }
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
 
-        .form-header h1 {
-            font-size: 1.875rem;
-            font-weight: 700;
-            color: #2d3748;
-        }
+/* --- Tables --- */
 
-        .form-header p {
-            color: #a0aec0;
-            margin-top: 0.5rem;
-        }
+.app-cmp-data-list {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 2rem;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden; /* Important for border-radius to work */
+}
 
-        .form-group {
-            margin-bottom: 1rem;
-        }
+.app-cmp-data-list th,
+.app-cmp-data-list td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
 
-        .form-group label {
-            display: block;
-            color: #4a5568;
-            font-size: 0.875rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-group input {
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            appearance: none;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            width: 100%;
-            padding: 0.75rem 1rem;
-            color: #4a5568;
-            line-height: 1.25;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-            border-color: transparent;
-        }
-        
-        .password-group {
-             margin-bottom: 1.5rem;
-        }
-        
-        .password-group input {
-             margin-bottom: 0.75rem;
-        }
+.app-cmp-data-list thead th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
 
-        .submit-button {
-            width: 100%;
-            background-color: #3b82f6;
-            color: #fff;
-            font-weight: 700;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease-in-out;
-        }
+.app-cmp-data-list tbody tr:last-child td {
+    border-bottom: 0;
+}
 
-        .submit-button:hover {
-            background-color: #2563eb;
-        }
-        
-        .notifications {
-            margin-top: 1.5rem;
-        }
-        
-        .error-message {
-            background-color: #fee2e2;
-            border: 1px solid #f87171;
-            color: #b91c1c;
-            padding: 1rem 1rem;
-            border-radius: 0.5rem;
-            position: relative;
-        }
+.app-cmp-data-list tbody tr:hover {
+    background-color: #f9fafb;
+}
 
-        .footer-text {
-            text-align: center;
-            color: #a0aec0;
-            font-size: 0.75rem;
-        }
+/* --- Notifications --- */
+
+.app-cmp-notifications {
+    margin-top: 1.5rem;
+}
+
+.app-cmp-notifications [role="alert"] {
+    padding: 1rem;
+    border-radius: var(--border-radius-md);
+    font-size: 0.9rem;
+    text-align: center;
+    border: 1px solid transparent;
+    background-color: var(--danger-color);
+    color: var(--white-color);
+}
+
+/* ==========================================================================
+   5. Utility Classes
+   ========================================================================== */
+
+.text-center {
+    text-align: center;
+}
+
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+.text-right {
+    text-align: right;
+}
+
+.w-full {
+    width: 100%;
+}
+
+input:read-only {
+  background-color: #f0f0f0; /* Light gray background */
+  border: 1px solid #ccc;    /* Light gray border */
+  color: #555;              /* Darker text color */
+  cursor: default;          /* Default cursor, not text cursor */
+  opacity: 0.8;             /* Slightly reduce opacity */
+}

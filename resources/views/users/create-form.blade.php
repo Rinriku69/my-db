@@ -10,7 +10,8 @@
         </label><br>
         <label>
             <b>Role</b>
-            <select name="role">
+            <select name="role" required>
+                <option value="" selected>--Please Select Role--</option>
                 <option value="USER">USER</option>
                 <option value="ADMIN">ADMIN</option>
             </select>
