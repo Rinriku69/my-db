@@ -29,7 +29,10 @@
         <form action="{{route('shops.remove-product',[
         'shopCode' => $shop->code])}}" id="remove-product"
         method="POST">@csrf</form>
-        <li class="app-cmp-links"><a href="{{ route('shops.add-product-form', ['shopCode' => $shop->code]) }}">Add product</a></li>
+        @can('update', $shop)
+            <li class="app-cmp-links"><a href="{{ route('shops.add-product-form', ['shopCode' => $shop->code]) }}">Add product</a></li>
+        @endcan
+        
         <li class="app-cmp-links">
             <a href="{{ session('bookmarks.shops.view-products'
             ,route('shops.view', ['shopCode' => $shop->code])) }}">Back</a></li>
@@ -77,9 +80,12 @@
                     </td>
                     <td>{{ $product->price }}</td>
                     <td>{{ $product->shops_count }}</td>
-                    <td>
+                    @can('update', $shop)
+                       <td>
                         <button type="submit"  form="remove-product" name="product" value="{{$product->code}}">Remove</button>
-                    </td>
+                    </td> 
+                    @endcan
+                    
                 </tr>
             @endforeach
         </tbody>

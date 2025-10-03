@@ -24,8 +24,10 @@
                 </div>
             </form>
         </search>
+        @can('create', \App\Models\Category::class)
         <li class="app-cmp-links"><a href="{{ route('categories.add-product-form', 
         ['categoryCode' => $categoryCode]) }}">Add product</a></li>
+        @endcan
         <li class="app-cmp-links"><a href="{{route('categories.view', ['categoryCode' => $categoryCode]) }}">Back</a></li>
         {{ $products->withQueryString()->links() }}
     </nav>

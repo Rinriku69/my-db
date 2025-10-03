@@ -16,9 +16,27 @@
                 <li><a href="{{ route('products.list') }}">Product List</a></li>
                 <li><a href="{{ route('shops.list') }}">Shops List</a></li>
                 <li><a href="{{ route('categories.list') }}">Categories</a></li>
+                <li><a href="{{ route('users.list') }}">User</a></li>
 
 
             </ul>
+        </nav>
+        <nav class="app-cmp-user-panel">
+
+            @auth
+
+                <form action="{{ route('logout') }}" method="post">
+
+                    @csrf
+                    <a href="{{ route('users.selves.view') }}">
+                        <span>{{ \Auth::user()->name }}</span></a>
+
+                    <button type="submit">Logout</button>
+
+                </form>
+
+            @endauth
+
         </nav>
     </header>
 
@@ -38,7 +56,11 @@
         </header>
 
         @yield('content')
-
+        @php
+            if (!Route::is('users.selves.*')) {
+                session()->put('bookmarks.users.selves.view', url()->full());
+            }
+        @endphp
     </main>
 
 

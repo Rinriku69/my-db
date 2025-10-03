@@ -18,14 +18,19 @@
                     'shopCode' => $shop->code,
                 ]) }}">View Products</a>
             </li>
-            <li>
+            @can('update', $shop)
+               <li>
                 <a href="{{ route('shops.update-form', [
                     'shopCode' => $shop->code,
                 ]) }}">Update</a>
-            </li>
-            <li>
+            </li> 
+            @endcan
+            @can('delte', $shop)
+               <li>
                 <button type="submit" form="app-form-delete" class="app-cl-link">Delete</button>
-            </li>
+            </li> 
+            @endcan
+            
         </ul>
     </nav>
 @endsection

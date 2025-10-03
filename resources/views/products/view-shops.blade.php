@@ -31,11 +31,13 @@
                 route('products.view', 
                 ['productCode' => $product->code])) }}">Back</a>
         </li>
+        @can('create', $product)
         <li class="app-cmp-links"><a
                 href="{{ route('products.add-shops-form', [
                     'productCode' => $product->code,
                 ]) }}">Add
-                shops</a></li>
+                shops</a></li> 
+        @endcan
         {{ $shops->withQueryString()->links() }}
     </nav>
 @endsection
@@ -69,10 +71,12 @@
                     <td>{{ $shop->name }}</td>
                     <td>{{ $shop->owner }}</td>
                     <td>{{ $shop->products_count }}</td>
+                    @can('delete', $product)
                     <td>
                         <button type="submit" form="remove-shop" name="shop"
                             value="{{ $shop->code }}">Remove</button>
                     </td>
+                    @endcan
                 </tr>
             @endforeach
         </tbody>

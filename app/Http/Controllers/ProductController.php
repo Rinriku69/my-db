@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Illuminate\View\View;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ProductController extends SearchableController
@@ -60,6 +61,7 @@ class ProductController extends SearchableController
 
     function list(ServerRequestInterface $request): View
     {
+        Gate::authorize('list', Product::class);
         $criteria = $this->prepareCriteria($request->getQueryParams());
         $query = $this->search($criteria)
             ->withCount('shops')
@@ -73,9 +75,11 @@ class ProductController extends SearchableController
 
     function view(string $productCode): view
     {
+        
         $product = Product::where('code', $productCode)
             ->with('category')
             ->firstOrFail();
+        Gate::authorize('view', $product);  
         return view('products.view', [
             'product' => $product,
         ]);
@@ -83,6 +87,7 @@ class ProductController extends SearchableController
 
     function CreateForm(): View
     {
+        Gate::authorize('create', Product::class);  
         $category = Category::get();
         return view('products.create-form',
     ['categories' => $category,]);
@@ -90,6 +95,7 @@ class ProductController extends SearchableController
 
     function create(ServerRequestInterface $request): RedirectResponse
     {
+         Gate::authorize('create', Product::class);  
         //$product = Product::create($request->getParsedBody()); mass insert
         $data = $request->getParsedBody();
         $category = Category::find($data['category_id']);
@@ -107,7 +113,9 @@ class ProductController extends SearchableController
 
     function UpdateForm(string $productCode): View
     {
+         
         $product = $this->find($productCode);
+        Gate::authorize('update', $product);  
         $category = Category::get();
         return view('products.update-form', [
             'product' => $product,
@@ -121,6 +129,7 @@ class ProductController extends SearchableController
     ): RedirectResponse {
         $data = $request->getParsedBody();
         $product = $this->find($productCode);
+        Gate::authorize('update', $product); 
         $category = Category::find($data['category_id']);
 
         $product->fill($data);
@@ -138,8 +147,9 @@ class ProductController extends SearchableController
     function delete(string $productCode): RedirectResponse
     {
         $product = $this->find($productCode);
+        Gate::authorize('delete',$product); 
         $product->delete();
-
+        
         return redirect(
             session()->get('bookmarks.products.view', route('products.list'))
         )
@@ -152,6 +162,7 @@ class ProductController extends SearchableController
         string $productCode
     ): View {
         $product = $this->find($productCode);
+        Gate::authorize('list',$product); 
         $criteria = $shopController->prepareCriteria($request->getQueryParams());
         $query = $shopController
             ->filter($product->shops(), $criteria)
@@ -168,6 +179,7 @@ class ProductController extends SearchableController
         string $productCode
     ): View {
         $product = $this->find($productCode);
+        Gate::authorize('update',$product); 
         $criteria = $shopController->prepareCriteria($request->getQueryParams());
         $query = $shopController
             ->getQuery()
@@ -192,6 +204,7 @@ class ProductController extends SearchableController
         string $productCode,
     ): RedirectResponse {
         $product = $this->find($productCode);
+        Gate::authorize('update',$product); 
         $data = $request->getParsedBody();
         $shop = $shopController
             ->getQuery()
@@ -214,7 +227,7 @@ class ProductController extends SearchableController
     ): RedirectResponse {
         $product = $this->find($productCode);
         $data = $request->getParsedBody();
-       
+       Gate::authorize('update',$product); 
         $shop = $product->shops()
             ->where('code', $data['shop'])
             ->firstOrFail();

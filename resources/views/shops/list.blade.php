@@ -24,8 +24,10 @@
             session()->put('bookmarks.shops.create-form', url()->full());
             session()->put('bookmarks.shops.view', url()->full());
         @endphp
+        @can('create', \App\Models\Shop::class)
         <li class="app-cmp-links"><a href="{{ route('shops.create-form') }}">Create Shop</a></li>
-        {{ $shops->withQueryString()->links() }}
+         @endcan
+         {{ $shops->withQueryString()->links() }}
     </nav>
 @endsection
 

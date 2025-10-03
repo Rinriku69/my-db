@@ -22,8 +22,12 @@
         </div>
       </form>
 </search>
+@can('create', $categories)
+    
+
 <li class="app-cmp-links"><a href="{{route('categories.create-form')}}">New Category</a></li>
-      {{$categories->withQueryString()->links()}}
+     @endcan 
+{{$categories->withQueryString()->links()}}
     </nav>
 @endsection
 
