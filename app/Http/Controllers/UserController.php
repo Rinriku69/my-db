@@ -9,6 +9,8 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -56,6 +58,7 @@ class UserController extends Controller
     function create(ServerRequestInterface $request): RedirectResponse{ 
         $data = $request->getParsedBody();
         Gate::authorize('create', User::class);
+        try{
         $user = new User();
         $user->fill($data);
         $user->email = $data['email'];
@@ -63,19 +66,43 @@ class UserController extends Controller
         $user->save();
         return redirect()->route('users.list')
         ->with('status','User '.$user->name.' was created');
+   }catch(QueryException $excp){
+        return redirect()->back()
+        ->withInput()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }catch(ModelNotFoundException $excp){
+        return redirect()
+        ->back()
+        ->withErrors([
+            'alert'=>$excp->getMessage()]);
     }
+}
 
     function delete(string $user): RedirectResponse
     {
         $user = $this->find($user);
        Gate::authorize('delete',$user); 
+       try{
         $user->delete();
         Gate::authorize('delete', User::class);
         return redirect(
             session()->get('bookmarks.user.view', route('users.list'))
         )
         ->with('status','User '.$user->name.' was Deleted');
+   }catch(QueryException $excp){
+        return redirect()->back()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }catch(ModelNotFoundException $excp){
+        return redirect()
+        ->back()
+        ->withErrors([
+            'alert'=>$excp->getMessage()]);
     }
+ }
 
     function UpdateForm(string $user): View
     {
@@ -93,15 +120,17 @@ class UserController extends Controller
         ServerRequestInterface $request,
         string $user,
     ): RedirectResponse {
-        Gate::authorize('update', User::class);
+        
         $data = $request->getParsedBody();
         $user = $this->find($user);
         Gate::authorize('update', $user);
+        try{
        $password = $user->password;
 
         $user->fill($data);
-        $user->email = $data['email'];
+        if(isset($data['role'])){
         $user->role = $data['role'];
+        }
          if($data['password'] !== null){
             $user->password = $data['password'];
         }else{
@@ -114,7 +143,19 @@ class UserController extends Controller
         return redirect()->route('users.view', [
             'user' => $user->id,
         ])->with('status','User '.$user->name.' was updated');
+    }catch(QueryException $excp){
+        return redirect()->back()
+        ->withInput()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }catch(ModelNotFoundException $excp){
+        return redirect()
+        ->back()
+        ->withErrors([
+            'alert'=>$excp->getMessage()]);
     }
+}
 
     function selvesUpdateForm(): View
     {
@@ -130,16 +171,14 @@ class UserController extends Controller
 
     function selvesUpdate(
         ServerRequestInterface $request,
-        string $user,
     ): RedirectResponse {
-        Gate::authorize('update', User::class);
+        try{
+        $userID = auth::user()->id;
         $data = $request->getParsedBody();
-        $user = $this->find($user);
-        /* Gate::authorize('update', $product);  */
+        $user = $this->find($userID);
        $password = $user->password;
-
         $user->fill($data);
-        $user->email = $data['email'];
+        
         $user->role = $data['role'];
          if($data['password'] !== null){
             $user->password = $data['password'];
@@ -152,5 +191,17 @@ class UserController extends Controller
 
         return redirect()->route('users.selves.view'
         )->with('status','User '.$user->name.' was updated');
-    }
+   }catch(QueryException $excp){
+        return redirect()->back()
+        ->withInput()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }catch(ModelNotFoundException $excp){
+        return redirect()
+        ->back()
+        ->withErrors([
+            'alert'=>$excp->getMessage()]);
+    } 
+}
 }

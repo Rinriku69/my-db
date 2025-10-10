@@ -22,7 +22,7 @@
         </div>
       </form>
 </search>
-@can('create', $categories)
+@can('create', \App\Models\Category::class)
     
 
 <li class="app-cmp-links"><a href="{{route('categories.create-form')}}">New Category</a></li>

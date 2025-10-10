@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Shop;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -53,13 +55,20 @@ class ShopController extends SearchableController
     }
 
     function create(ServerRequestInterface $request): RedirectResponse {
-    $shop = Shop::create($request->getParsedBody());
-    Gate::authorize('create',$shop);
-
+    Gate::authorize('create',Shop::class);
+    try{
+        $shop = Shop::create($request->getParsedBody());
     return redirect(
         session()->get('bookmarks.shops.create-form', route('shops.list'))
     )
     ->with('status','Shop '.$shop->code.' was created');
+    }catch(QueryException $excp){
+        return redirect()->back()
+        ->withInput()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }
     }
 
     function UpdateForm(string $shopCode): View {
@@ -77,6 +86,7 @@ class ShopController extends SearchableController
     ): RedirectResponse {
     $shop = $this->find($shopCode);
     Gate::authorize('update',$shop);
+    try{
     $shop->fill($request->getParsedBody());
     $shop->save();
 
@@ -84,18 +94,32 @@ class ShopController extends SearchableController
     'shopCode' => $shop->code,
     ])
     ->with('status','Shop '.$shop->code.' was updated');;
+    }catch(QueryException $excp){
+        return redirect()->back()
+        ->withInput()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
     }
+}
 
     function delete(string $shopCode): RedirectResponse {
     $shop = $this->find($shopCode);
     Gate::authorize('delete',$shop);
+    try{
     $shop->delete();
 
     return redirect(
         session()->get('bookmarks.shops.view', route('shops.list'))
     )
     ->with('status','Shop '.$shop->code.' was deleted');
+    }catch(QueryException $excp){
+        return redirect()->back()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
     }
+}
 
     function viewProducts(
         ServerRequestInterface $request,
@@ -146,6 +170,7 @@ class ShopController extends SearchableController
     ): RedirectResponse {
         $shop = $this->find($shopCode);
         Gate::authorize('create',$shop);
+        try{
         $data = $request->getParsedBody();
         $product = $productController
             ->getQuery()
@@ -161,7 +186,18 @@ class ShopController extends SearchableController
         return redirect()->back()
         ->with('status','Product '.$data['product'].' was added to Shop '
     .$shop->code);
+    }catch(QueryException $excp){
+        return redirect()->back()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }catch(ModelNotFoundException $excp){
+        return redirect()
+        ->back()
+        ->withErrors([
+            'alert'=>$excp->getMessage()]);
     }
+}
 
     function removeProduct(
         ServerRequestInterface $request,
@@ -169,6 +205,7 @@ class ShopController extends SearchableController
     ): RedirectResponse {
         $shop = $this->find($shopCode);
         Gate::authorize('create',$shop);
+        try{
         $data = $request->getParsedBody();
        
         $product = $shop->products()
@@ -179,7 +216,18 @@ class ShopController extends SearchableController
         return redirect()->back()
         ->with('status','Product '.$data['product'].' was removed from Shop '
     .$shop->code);
-    } 
+    }catch(QueryException $excp){
+        return redirect()->back()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }catch(ModelNotFoundException $excp){
+        return redirect()
+        ->back()
+        ->withErrors([
+            'alert'=>$excp->getMessage()]);
+    }
+} 
 
 
 }

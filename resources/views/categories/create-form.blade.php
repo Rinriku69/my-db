@@ -6,15 +6,15 @@
         @csrf
         <label >
             <b>Code</b>
-            <input type="text" name="code"  required>
+            <input type="text" name="code" value="{{old('code')}}" required>
         </label><br>
         <label >
             <b>Name</b>
-            <input type="text" name="name"  required>
+            <input type="text" name="name" value="{{old('name')}}" required>
         </label><br>
         <label>
             <b>Description</b>
-            <textarea name="description" cols="30" rows="10" required></textarea>
+            <textarea name="description" cols="30" rows="10" required>{{old('description')}}</textarea>
         </label><br>
         <button type="submit">Create</button>
         <a href="{{session()->get('bookmarks.categories.create-form',

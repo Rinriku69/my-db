@@ -5,27 +5,27 @@
         @csrf
         <label>
             <b>Code</b>
-            <input type="text" name="code" value="{{ $product->code }}">
+            <input type="text" name="code" value="{{old('code',$product->code)  }}">
         </label><br>
         <label>
             <b>Name</b>
-            <input type="text" name="name" value="{{ $product->name }}">
+            <input type="text" name="name" value="{{ old('name',$product->name) }}">
         </label><br>
         <label>
             <b>Category</b>
-            <select name="category_id" id="">
+            <select name="category_code" id="">
                 @foreach ($categories as $category)
-                    <option value="{{ $category->id }}" @selected($product->category->code === $category->code)>
+                    <option value="{{ $category->code }}" @selected($category->code === old('category_code',$product->category->code))>
                         [{{ $category->code }}] {{ $category->name }}</option>
                 @endforeach
             </select></label><br>
         <label>
             <b>Price</b>
-            <input type="number" name="price" value="{{ $product->price }}">
+            <input type="number" name="price" value="{{ old('price',$product->price) }}">
         </label><br>
         <label>
             <b>Description</b>
-            <textarea name="description" cols="30" rows="10">{{ $product->description }}</textarea>
+            <textarea name="description" cols="30" rows="10">{{old('description',$product->description) }}</textarea>
         </label><br>
         <button type="submit">Update</button>
         <a href="{{ route('products.view', [

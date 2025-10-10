@@ -6,27 +6,27 @@
         @csrf
         <label >
             <b>Code</b>
-            <input type="text" name="code"  value="{{$shop->code}}">
+            <input type="text" name="code"  value="{{old('code',$shop->code)}}">
         </label><br>
         <label >
             <b>Name</b>
-            <input type="text" name="name"  value="{{$shop->name}}">
+            <input type="text" name="name"  value="{{old('name',$shop->name)}}">
         </label><br>
         <label >
             <b>Owner</b>
-            <input type="text" name="owner" value="{{$shop->owner}}">
+            <input type="text" name="owner" value="{{old('owner',$shop->owner)}}">
         </label><br>
         <label >
             <b>Latitude</b>
-            <input type="text" name="latitude" value="{{$shop->latitude}}">
+            <input type="text" name="latitude" value="{{old('latitude',$shop->latitude)}}">
         </label><br>
         <label >
             <b>Longitude</b>
-            <input type="text" name="longitude" value="{{$shop->longitude}}">
+            <input type="text" name="longitude" value="{{old('longitude',$shop->longitude)}}">
         </label><br>
         <label>
             <b>Address</b>
-            <textarea name="address" cols="30" rows="10" >{{$shop->address}}</textarea>
+            <textarea name="address" cols="30" rows="10" >{{old('address',$shop->address)}}</textarea>
         </label><br>
         <button type="submit">Update</button>
         <a href="{{route('shops.view',['shopCode'=>$shop->code])}}">

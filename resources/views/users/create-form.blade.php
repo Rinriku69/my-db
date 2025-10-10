@@ -6,25 +6,25 @@
         @csrf
         <label >
             <b>Name</b>
-            <input type="text" name="name"  required>
+            <input type="text" name="name" value="{{old('name')}}" required>
         </label><br>
         <label>
             <b>Role</b>
             <select name="role" required>
-                <option value="" selected>--Please Select Role--</option>
-                <option value="USER">USER</option>
-                <option value="ADMIN">ADMIN</option>
+                <option value="">--Please Select Role--</option>
+                <option value="USER" @selected(old('role') == "USER")>USER</option>
+                <option value="ADMIN" @selected(old('role') == "ADMIN")>ADMIN</option>
             </select>
         </label><br>
         <label >
             <b>Email</b>
-        <input type="email" name="email"  required>
+        <input type="email" name="email" value="{{old('email')}}" required>
         </label>
         <br>
         
         <label>
             <b>Password</b>
-            <input type="text" name="password"  required>
+            <input type="text" name="password" value="{{old('')}}" required>
         </label><br>
         
         <button type="submit">Create</button>

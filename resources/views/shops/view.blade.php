@@ -25,7 +25,7 @@
                 ]) }}">Update</a>
             </li> 
             @endcan
-            @can('delte', $shop)
+            @can('delete', $shop)
                <li>
                 <button type="submit" form="app-form-delete" class="app-cl-link">Delete</button>
             </li> 

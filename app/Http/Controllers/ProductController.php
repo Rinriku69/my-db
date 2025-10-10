@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Psr\Http\Message\ServerRequestInterface;
 use Illuminate\View\View;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -97,8 +99,9 @@ class ProductController extends SearchableController
     {
          Gate::authorize('create', Product::class);  
         //$product = Product::create($request->getParsedBody()); mass insert
+        try{
         $data = $request->getParsedBody();
-        $category = Category::find($data['category_id']);
+        $category = Category::find($data['category_code']);
 
         $product = new Product();
         $product->fill($data);
@@ -109,6 +112,13 @@ class ProductController extends SearchableController
             session()->get('bookmarks.products.create-form', route('products.list'))
         )
         ->with('status','Product '.$product->code.' was created');
+    } catch(QueryException $excp){
+        return redirect()->back()
+        ->withInput()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }
     }
 
     function UpdateForm(string $productCode): View
@@ -130,7 +140,8 @@ class ProductController extends SearchableController
         $data = $request->getParsedBody();
         $product = $this->find($productCode);
         Gate::authorize('update', $product); 
-        $category = Category::find($data['category_id']);
+        try{
+        $category = Category::find($data['category_code']);
 
         $product->fill($data);
         $product->category()->associate($category);
@@ -142,7 +153,14 @@ class ProductController extends SearchableController
         return redirect()->route('products.view', [
             'productCode' => $product->code,
         ])->with('status','Product '.$product->code.' was updated');
+    }catch(QueryException $excp){
+        return redirect()->back()
+        ->withInput()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
     }
+}
 
     function delete(string $productCode): RedirectResponse
     {
@@ -205,6 +223,8 @@ class ProductController extends SearchableController
     ): RedirectResponse {
         $product = $this->find($productCode);
         Gate::authorize('update',$product); 
+
+        try{ 
         $data = $request->getParsedBody();
         $shop = $shopController
             ->getQuery()
@@ -219,6 +239,18 @@ class ProductController extends SearchableController
         $product->shops()->attach($shop);
         return redirect()->back()
         ->with('status','Shop '.$data['shop'].' was added to product '.$productCode);
+       
+    }catch(QueryException $excp){
+        return redirect()
+        ->back()
+        ->withErrors([
+            'alert'=>$excp->errorInfo[2]]);
+    }catch(ModelNotFoundException $excp){
+        return redirect()
+        ->back()
+        ->withErrors([
+            'alert'=>$excp->getMessage()]);
+    }
     }
 
     function removeShop(

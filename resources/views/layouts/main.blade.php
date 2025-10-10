@@ -50,6 +50,13 @@
                         {{ $value }}
                     </div>
                 @endsession
+
+                @error('alert')
+                <div role="alert">
+                    {{$message}}
+                </div>
+                    
+                @enderror
             </div>
             <h1><span @class($titleClasses ?? [])>{{ $title }}</span></h1>
             @yield('header')

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Category;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 
 use Illuminate\View\View;
@@ -37,13 +39,21 @@ class CategoryController extends SearchableController
     }
 
     function create(ServerRequestInterface $request): RedirectResponse {
+    
+    Gate::authorize('create', Category::class);
+    try{
     $categories = Category::create($request->getParsedBody());
-    Gate::authorize('create', $categories);
-
     return redirect( 
         session()->get('bookmarks.categories.create-form', route('categories.list')))
     ->with('status','Category '.$categories->code.' was created');
-    }
+    }catch(QueryException $excp){
+        return redirect()->back()
+        ->withInput()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }    
+}
 
     function view(string $categoryCode) : View{
         $category = Category::where('code',$categoryCode)->firstOrFail();
@@ -66,6 +76,7 @@ class CategoryController extends SearchableController
     ): RedirectResponse {
     $category = $this->find($categoryCode);
     Gate::authorize('update', $category);
+    try{
     $category->fill($request->getParsedBody());
     $category->save();
 
@@ -73,17 +84,37 @@ class CategoryController extends SearchableController
     'categoryCode' => $category->code,
     ])
     ->with('status','Category '.$category->code.' was updated');;
-    }
+    }catch(QueryException $excp){
+        return redirect()->back()
+        ->withInput()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }    
+}
 
     function delete(string $categoryCode): RedirectResponse {
     $category = $this->find($categoryCode);
     Gate::authorize('delete', $category);
+    try{
     $category->delete();
     return redirect(
         session()->get('bookmarks.categories.view', route('categories.list'))
     )
     ->with('status','Category '.$category->code.' was deleted');;
-    }
+    }catch(QueryException $excp){
+        return redirect()->back()
+        ->withInput()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }catch(ModelNotFoundException $excp){
+        return redirect()
+        ->back()
+        ->withErrors([
+            'alert'=>$excp->getMessage()]);
+    }    
+}
 
     function viewProducts(
         ServerRequestInterface $request,
@@ -108,9 +139,9 @@ class CategoryController extends SearchableController
         ProductController $productController,
         string $categoryCode
     ): View {
-        
         $category = $this->find($categoryCode);
         Gate::authorize('create', $category);
+        
         $criteria = $productController->prepareCriteria($request->getQueryParams());
 
         $query = $productController
@@ -133,6 +164,8 @@ class CategoryController extends SearchableController
             'criteria' => $criteria,
             'products' => $query->paginate($productController::max_items),
         ]);
+    
+    
     }
 
     function addProducts(
@@ -142,6 +175,7 @@ class CategoryController extends SearchableController
     ): RedirectResponse {
         $category = $this->find($categoryCode);
         Gate::authorize('create', $category);
+        try{
         $data = $request->getParsedBody();
         $product = $productController
             ->getQuery()
@@ -157,6 +191,17 @@ class CategoryController extends SearchableController
         return redirect()->back()
         ->with('status','Product '.$data['product'].' was added to '
     .$category->code);
+   }catch(QueryException $excp){
+        return redirect()->back()
+        ->withErrors([
+            'alert' => $excp->errorInfo[2],//errorInfo is only key for QueryException!!
+        ]);
+    }catch(ModelNotFoundException $excp){
+        return redirect()
+        ->back()
+        ->withErrors([
+            'alert'=>$excp->getMessage()]);
     }
+}
       
 }
